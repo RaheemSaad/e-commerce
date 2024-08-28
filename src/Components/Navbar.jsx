@@ -1,74 +1,92 @@
-import React, { useContext } from 'react'
+/* eslint-disable no-unused-vars */
+import React, { useContext, useState } from 'react'
 import logo from '../assets/finalProject assets/freshcart-logo.svg'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { auth } from '../Context/AuthContext'
+import useQueryCart from '../Hooks/useQueryCart'
+import addToCartApi, { getCartApi } from './../APIS/cartApi';
 
 export default function Navbar() {
+
+  let { data: datanums, isLoading, isError, error } = useQueryCart("getCart", getCartApi);
+
+  let { data } = useQueryCart('cart', addToCartApi)
+
+
   let navigate = useNavigate()
-  let { setLogin, isLogin } = useContext(auth)
 
 
-  function LogOut() {
+  let { isLogin, setLogin } = useContext(auth)
+
+
+  let [open, setOpen] = useState(false)
+
+  function toggle() {
+    setOpen(!open)
+  }
+
+  function logout() {
     localStorage.removeItem("userToken")
     setLogin(null)
-    navigate("/login")
+    navigate('/login')
+
   }
+
+
   return (
 
+    <nav className=' py-4 bg-[#f0f3f2]  '>
+      <div className="m-auto relative  justify-between items-center  px-[60px] md:flex">
+        <div className=' gap-6 md:flex md:gap-3'>
+          <Link to={'/'}><img src={logo} width={130} alt="" /></Link>
 
 
-    <nav className="bg-gray-100 ">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src={logo} className="h-8" alt="" />
-        </a>
-        <button data-collapse-toggle="navbar-default" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm  rounded-lg md:hidden  focus:outline-none" aria-controls="navbar-default" aria-expanded="false">
-          <span className="sr-only">Open main menu</span>
-          <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M1 1h15M1 7h15M1 13h15" />
-          </svg>
-        </button>
-        <div className="hidden w-full md:block md:w-auto">
-          {isLogin ? <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 ">
+          {isLogin ? <ul className={`md:flex gap-8 ${open ? "block" : "hidden"} `}>
             <li>
-              <NavLink className={"text-gray-400 py-2 px-1"} to={"/"}>Home</NavLink>
+              <NavLink className='text-black font-bold p-4' to={'/'}>Home</NavLink>
+            </li>
+
+            <li>
+              <NavLink className='text-black font-bold p-4' to={'/brand'}>Brand</NavLink>
             </li>
             <li>
-              <NavLink className={"text-gray-400 py-2 px-1"} to={"/products"}>Products</NavLink>
+              <NavLink className='text-black font-bold p-4' to={'/products'}>Products</NavLink>
             </li>
-            {/* <li>
-              <NavLink className={"text-gray-400 py-2 px-1"} to={"/categories"}>Categories</NavLink>
-            </li> */}
-            <li>
-              <NavLink className={"text-gray-400 py-2 px-1"} to={"/brand"}>Brands</NavLink>
-            </li>
-            <li>
-              <NavLink to={"/cart"}>Cart <i className='fa-solid fa-cart-shopping'></i></NavLink>
-            </li>
-          </ul> : ''}
+          </ul> : ""}
+
         </div>
-        <div >
-          <ul className="flex gap-10">
-            
-            <li>
-              <a href="#"><i className='fab fa-facebook-f mx-1 text-gray-500'></i></a>
-              <a href="#"><i className='fab fa-twitter mx-1 text-gray-500'></i></a>
-              <a href="#"><i className='fab fa-google mx-1 text-gray-500'></i></a>
-              <a href="#"><i className='fab fa-instagram mx-1 text-gray-500'></i></a>
-            </li>
-    
-            {isLogin ? <li className='cursor-pointer' onClick={LogOut}> LogOut {isLogin ? <b className='text-green-600 mx-6'>Hi {isLogin.name}</b> : ''}</li> :
-              <li>
-                <NavLink to={"/login"} className={"mx-2 text-gray-500"}>Login</NavLink>
-                <NavLink to={"/register"} className={"mx-2 text-gray-500"}>Register</NavLink>
+
+        <div>
+          <ul className={`md:flex gap-6 justify-center items-center ${open ? "block" : "hidden"}`} >
+
+            {isLogin ? <>
+              <li className='relative  pt-3  md:pt0 '>
+                <Link to={'/cart'}>
+                  Cart <i className='  fas fa-cart-shopping text-black '></i>           
+                </Link>
               </li>
-            }
+              <li onClick={logout} className='cursor-pointer'>  {isLogin ? <b className='me-5 text-2xl text-green-700'>Hi {isLogin.name}</b> : ""}
+
+                <b>LogOut</b> </li> </> : <><li > <NavLink className='text-black' to={'/login'}>Login</NavLink> </li>
+              <li> <NavLink className='text-black' to={'/register'}>Register</NavLink> </li>
+              <li className='flex gap-3'>
+                <a href=""><i className='    fab text-black fa-facebook-f'></i></a>
+                <a href=""><i className='fab   text-black fa-twitter'></i></a>
+                <a href=""><i className='fab  text-black fa-google'></i></a>
+                <a href=""><i className='fab  text-black fa-instagram'></i></a>
+
+              </li></>}
+
+
           </ul>
         </div>
+
+        <i onClick={toggle} className={` md:hidden block fas ${!open ? "fa-bars" : "fa-close"} fa-2x absolute top-0 right-2 cursor-pointer`}></i>
+
       </div>
     </nav>
 
-
-
   )
+
 }
+

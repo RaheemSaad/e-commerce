@@ -28,12 +28,14 @@ export default function Cart() {
   return (
     <>
 
-      {data?.numOfCartItems ? <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
+      {data?.numOfCartItems ? <div className="  shadow-md sm:rounded-lg my-4">
         <button className='bg-red-700 text-white my-3 p-4' onClick={() => { clearMutate() }}>Clear</button>
         <div className='md:flex md:justify-between'>
           <h1 className='md:text-2xl text-xl my-3 font-medium'>Cart Items: <span className='text-green-700'>{data?.numOfCartItems}</span> </h1>
           <h1 className='md:text-2xl text-xl my-3 font-medium'>Total Price: <span className='text-green-700'>{data?.data?.totalCartPrice}</span> </h1>
         </div>
+
+        <div className=" relative overflow-x-auto shadow-md sm:rounded-lg my-4">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -91,6 +93,7 @@ export default function Cart() {
             </tr>)}
           </tbody>
         </table>
+        </div>
       </div> : <img className='m-auto' src={cartImage} alt="" />}
 
 <BasicModal cartId={data?.data?._id}/>
